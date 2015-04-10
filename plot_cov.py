@@ -22,7 +22,7 @@ def getCov(options):
 	return COV
 
 def plotHist(COV, options):
-	plt.hist(COV, bins=50, range=(0,500))
+	plt.hist(COV, bins=100, range=(0,300))
 	plt.title(os.path.basename(options.input_file))	
 	plt.ylabel("Number of bases")
 	plt.xlabel("Coverage")
