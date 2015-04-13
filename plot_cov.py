@@ -4,6 +4,7 @@ from optparse import OptionParser as opt
 import matplotlib.pyplot as plt
 import os
 from matplotlib.backends.backend_pdf import PdfPages
+import numpy as np
 
 # Need program genomeCoverageBEd
 
@@ -36,4 +37,6 @@ COV = COV.split("\n")
 COV = filter(None, COV)
 COV = [int(x) for x in COV]
 plotHist(COV, options)
+variance = np.var(COV)
 
+print "Completed plotting, variance of depth was: %s" % variance
