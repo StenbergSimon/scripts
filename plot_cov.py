@@ -39,4 +39,4 @@ COV = [int(x) for x in COV]
 plotHist(COV, options)
 variance = np.var(COV)
 mean = np.mean(COV)
-print "Completed plotting, variance of depth was: %s, mean depth was: %s" % variance, mean
+print "Completed plotting, variance of depth was: %s, mean depth was: %s" % (variance, mean)
