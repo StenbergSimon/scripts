@@ -25,11 +25,17 @@ def getCov(options):
 	bed.wait()
 	return COV
 
-def plotHist(COV, options):
+def plotHist(COV, options, mean, iqr):
 	plt.hist(COV, bins=100, range=(0,300))
 	plt.title(os.path.basename(options.input_file))	
 	plt.ylabel("Number of bases")
 	plt.xlabel("Coverage")
+        mean = float(mean)
+	iqr = float(iqr)
+	mean = str(round(mean, 2))
+	iqr = str(round(iqr, 2))
+	plt.annotate(("Average = " + mean), xy=(0.65, 0.95), xycoords='axes fraction')
+	plt.annotate(("IQR = " + iqr), xy=(0.65, 0.85), xycoords='axes fraction')
 	pp = PdfPages(options.out)
 	pp.savefig()
 	pp.close()
@@ -39,7 +45,7 @@ COV = getCov(options)
 COV = COV.split("\n")
 COV = filter(None, COV)
 COV = [int(x) for x in COV]
-plotHist(COV, options)
-variance = np.var(COV)
+q75, q25 = np.percentile(COV, [75 ,25])
+iqr = q75 - q25
 mean = np.mean(COV)
-print "Completed plotting, variance of depth was: %s, mean depth was: %s" % (variance, mean)
+plotHist(COV, options, mean, iqr)
