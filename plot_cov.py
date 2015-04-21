@@ -1,11 +1,14 @@
 #!/usr/bin/env python 
 from subprocess import Popen, PIPE
 from optparse import OptionParser as opt
+import matplotlib
+matplotlib.use('PDF')
+from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
 import os
-from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 
+plt.ioff()
 # Need program genomeCoverageBEd
 
 prsr = opt()
