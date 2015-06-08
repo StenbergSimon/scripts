@@ -11,10 +11,9 @@ prsr.add_option("-o", "--output", dest="out", metavar="FILE", help="Output file,
 
 
 def check_params(options):
-	
     if options.out == None:
         options.out = options.input_file
-    if re.match(r"grayscale_values\':\s\[(.+)\],", options.gray_scale) == None:
+    if re.match(r"grayscale_values\':\s\[.+\]", options.gray_scale) == None:
         quit("ERROR:Grayscale seem to be of wrong format!")
 
 class gray_scale_patcher():
@@ -25,9 +24,9 @@ class gray_scale_patcher():
     def patch(self, input_file, new_gs, output):
 
         PASS_ANALYSIS = self.parser(input_file)
+	new_gs = str(new_gs) + str(",")
         for i in xrange(1, len(PASS_ANALYSIS)):
-            new_gs = new_gs + ","
-            p = re.compile(r"grayscale_values\':\s\[(.+)\],")
+            p = re.compile(r"\'grayscale_values\':\s\[(.+)\],")
             PASS_ANALYSIS[i] = p.sub(new_gs, PASS_ANALYSIS[i])
         self.writer(PASS_ANALYSIS, output)	
 	
