@@ -113,7 +113,7 @@ def writeRscript(PLATE, name):
 	for line in PLATE:
 		pindex = "p" + str(p)
 		print >> out_file, pindex + " <- melt(" + pindex + ")"
-		print >> out_file, pindex + "$variable <- \"Cycle" + str(p) + "\"" 
+		print >> out_file, pindex + "$variable <- \"Cycle" + str(p).zfill(2) + "\"" 
 		print >> out_file, "b" + str(p) + " <- boxplot(" + pindex + "$value)"
 		print >> out_file, "z" + str(p) + " <- b" + str(p) + "$out < median(" + pindex + "$value)"
 		print >> out_file, "n" + str(p) + " <- sum(z" + str(p) + ")"  
@@ -129,7 +129,27 @@ def writeRscript(PLATE, name):
 			print >> out_file, ",p" + str(p),
 		p = p + 1 
 	print >> out_file, ")"
-	print >> out_file, "no_extremes <- data.frame(",
+	print >> out_file, "xlimit <- max(",
+        p = 1
+        while p <= no_files:
+                if p == 1:
+                        print >> out_file, "p" + str(p) + "$value",
+
+                else:
+                        print >> out_file, ",p" + str(p) + "$value",
+                p = p + 1
+        print >> out_file, ")"
+        print >> out_file, "a_factor <- abs(min(",
+        p = 1
+        while p <= no_files:
+                if p == 1:
+                        print >> out_file, "p" + str(p) + "$value",
+
+                else:
+                        print >> out_file, ",p" + str(p) + "$value",
+                p = p + 1
+        print >> out_file, ")) + 0.0001"
+        print >> out_file, "no_extremes <- data.frame(",
 	p = 1
 	while p <= no_files:
                 if p == 1:
@@ -163,21 +183,32 @@ def writeRscript(PLATE, name):
 	print >> out_file, "pl <- pl + geom_bar(stat=\"identity\") + labs(x=\"\", y=\"Number of outliers (<Median)\") + scale_fill_manual(name=\"\", values=c(\"#00AA93\",\"#FF6A00\"))"
 
 	print >> out_file, "pl <- pl + theme(legend.position=\"none\")"
+	print >> out_file, "pl <- pl + theme(axis.text.x = element_text(angle = 90, hjust = 1))"
+	print >> out_file, "p <- p + theme(axis.text.x = element_text(angle = 90, hjust = 1))"
+	print >> out_file, "pm <- pm + theme(axis.text.x = element_text(angle = 90, hjust = 1))"
 	print >> out_file, "pl <- pl + ggtitle(\"" + name + "\")"
 	print >> out_file, "p <- p + ggtitle(\"" + name + "\")"
 	print >> out_file, "pm <- pm + ggtitle(\"" + name + "\")"
 	print >> out_file, "print(pl)"
 	print >> out_file, "print(p)"
 	print >> out_file, "print(pm)"
-	print >> out_file, "print(ggplot(c%s, aes(x=V1)) + xlim(0,12) + ggtitle(\"%s\") + labs(x=\"GT(h)\", y=\"count\") + theme_grey(base_size = 30) + geom_histogram(binwidth=0.2, fill=\"#FF6A00\"))" % (p, name)
+        p = 1
+        for line in PLATE:
+            print >> out_file, "p%s$value <- (p%s$value + a_factor)" % (p,p)
+            p = p + 1
+        p = 1
+        for line in PLATE: 
+            cycle = "Cycle " + str(p)
+            print >> out_file, "hp%s <- ggplot(p%s, aes(x=value)) + xlim(0,xlimit) + ggtitle(\"%s\") + labs(x=\"GT(h)\", y=\"count\") + theme_grey(base_size = 20) + geom_histogram(binwidth=0.05, fill=\"#FF6A00\") + scale_y_sqrt()" % (p, p, cycle)
+            p = p + 1
         print >> out_file, "dev.off()"
 
 def runPlot (options, name):
 	name_full = os.path.join(os.path.dirname(options.path), name)
-	name_full = name.rstrip()
+        #name_full = name.rstrip()
 	rscript=os.path.join(os.path.dirname(options.path), "run_plot.r")
 	call(["Rscript", rscript, name_full], stdout=DEVNULL, stderr=DEVNULL)
-	if options.keep:
+	if bool(options.keep) == True:
 		new_name = name.rstrip() + "_plot.r"
 		new_name = os.path.join(os.path.dirname(options.path), new_name)
 		call(["mv", rscript, new_name])
@@ -208,7 +239,6 @@ def pdfTrimmer(name, options):
 	inpdf = PdfFileReader(file(pdf, "rb"))
 	output = PdfFileWriter()
 	numPages = inpdf.getNumPages()
-	output.addPage(inpdf.getPage((int(numPages) - 4)))
         output.addPage(inpdf.getPage((int(numPages) - 3)))
 	output.addPage(inpdf.getPage((int(numPages) - 2)))
 	output.addPage(inpdf.getPage((int(numPages) - 1)))
@@ -252,8 +282,8 @@ with open (options.list, "r") as file_date:
 			pass
 
 
-#PLATE4 = fixParaquat(PLATE4, PLATE9)
-#PLATE1, PLATE3 = fixMissingCycles(PLATE1, PLATE3)
+PLATE4 = fixParaquat(PLATE4, PLATE9)
+PLATE1, PLATE3 = fixMissingCycles(PLATE1, PLATE3)
 
 PLATES = []
 PLATES.append(PLATE1)
@@ -271,7 +301,7 @@ for PLATE, temp_name  in zip(PLATES, namefile):
 	temp_name = temp_name.rstrip()
 	writeRscript(PLATE, temp_name)
 	runPlot(options, temp_name)
-	pdfTrimmer(temp_name,options)
+        pdfTrimmer(temp_name,options)
 
-cleaner(CLEAN_LIST)
+#cleaner(CLEAN_LIST)
 
