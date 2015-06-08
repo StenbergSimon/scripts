@@ -220,19 +220,23 @@ def fixParaquat(PLATE4, PLATE9):
 	PLATE4[1] = PLATE9[1]
 	return PLATE4
 
-def fixMissingCycles(PLATE1, PLATE2, PLATE3, PLATE4):
+def fixMissingCycles(PLATE1, PLATE2, PLATE3, PLATE4, PLATE5, PLATE6, PLATE7, PLATE8):
 	del PLATE1[4:6]
-	del PLATE1[20]
-	del PLATE1[51]
-	del PLATE2[29]
-	del PLATE2[33]
-	del PLATE2[52]
+	del PLATE1[19]
+	del PLATE1[50]
+	del PLATE2[28]
+	del PLATE2[32]
+	del PLATE2[51]
 	del PLATE3[5]
-	del PLATE3[23]
-	del PLATE3[27]
-	del PLATE3[36]
-	del PLATE4[51:55]	
-	return PLATE1, PLATE2, PLATE3, PLATE4
+	del PLATE3[22]
+	del PLATE3[26]
+	del PLATE3[35]
+	del PLATE4[50:54]
+	del PLATE7[30]
+	PLATE5.pop()
+	PLATE6.pop()
+	PLATE8.pop()	
+	return PLATE1, PLATE2, PLATE3, PLATE4, PLATE5, PLATE6, PLATE7, PLATE8
 
 def cleaner(CLEAN_LIST):
 	for folder in CLEAN_LIST:
@@ -292,7 +296,7 @@ with open (options.list, "r") as file_date:
 
 
 PLATE4 = fixParaquat(PLATE4, PLATE9)
-PLATE1, PLATE2, PLATE3, PLATE4 = fixMissingCycles(PLATE1, PLATE2, PLATE3, PLATE4)
+PLATE1, PLATE2, PLATE3, PLATE4, PLATE5, PLATE6, PLATE7, PLATE8 = fixMissingCycles(PLATE1, PLATE2, PLATE3, PLATE4, PLATE5, PLATE6, PLATE7, PLATE8)
 
 PLATES = []
 PLATES.append(PLATE1)
