@@ -103,6 +103,14 @@ def writeRscript(PLATE, name):
 	print >> out_file, "args <-commandArgs(trailingOnly = TRUE)"		
 	print >> out_file, "filename<-paste(args[1], \'.pdf\', sep=\"\")"
 	print >> out_file, "pdf(filename)"
+	print >> out_file, "var_as = 0.03206006"
+	print >> out_file, "var_rap = 0.03186669"
+	print >> out_file, "var_ca = 0.0145019"
+	print >> out_file, "var_pq = 0.08868808"
+	print >> out_file, "var_isl = 0.01113154"
+	print >> out_file, "var_cit = 0.01423643"
+	print >> out_file, "var_trp = 0.04281977"
+	print >> out_file, "var_gly = 0.004589893"
 	p = 1
 	for line in PLATE:
 		line = line.rstrip()
@@ -118,6 +126,7 @@ def writeRscript(PLATE, name):
 		print >> out_file, "z" + str(p) + " <- b" + str(p) + "$out < median(" + pindex + "$value)"
 		print >> out_file, "n" + str(p) + " <- sum(z" + str(p) + ")"  
 		print >> out_file, "m" + str(p) + " <- rbind(mean(p" + str(p) + "$value), sd(p" + str(p) + "$value))"
+		print >> out_file, "v" + str(p) + " <- var(p" + str(p) + "$value)"
 		p = p + 1
 	print >> out_file, "exp.molten <- rbind(", 
 	p = 1
@@ -159,6 +168,16 @@ def writeRscript(PLATE, name):
                         print >> out_file, ",n" + str(p),
                 p = p + 1 
 	print >> out_file, ")"
+     	print >> out_file, "vars <- data.frame(",
+	p = 1
+       	while p <= no_files:
+               	if p == 1:
+              		print >> out_file, "v" + str(p),
+
+               	else:
+                       	print >> out_file, ",v" + str(p),
+               	p = p + 1
+        print >> out_file, ")"
 	print >> out_file, "means <- data.frame(",
 	p = 1
 	while p <= no_files:
