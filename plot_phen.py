@@ -124,7 +124,9 @@ def writeRscript(PLATE, name):
 		print >> out_file, pindex + "$variable <- \"Cycle" + str(p).zfill(2) + "\"" 
 		print >> out_file, "b" + str(p) + " <- boxplot(" + pindex + "$value)"
 		print >> out_file, "z" + str(p) + " <- b" + str(p) + "$out < median(" + pindex + "$value)"
+		print >> out_file, "pz" + str(p) + " <- b" + str(p) + "$out > median(" + pindex + "$value)"
 		print >> out_file, "n" + str(p) + " <- sum(z" + str(p) + ")"  
+		print >> out_file, "pn" + str(p) + " <- sum(pz" + str(p) + ")"  
 		print >> out_file, "m" + str(p) + " <- rbind(mean(p" + str(p) + "$value), sd(p" + str(p) + "$value))"
 		print >> out_file, "v" + str(p) + " <- var(p" + str(p) + "$value)"
 		p = p + 1
@@ -168,6 +170,16 @@ def writeRscript(PLATE, name):
                         print >> out_file, ",n" + str(p),
                 p = p + 1 
 	print >> out_file, ")"
+	print >> out_file, "no_pos_extremes <- data.frame(",
+        p = 1
+        while p <= no_files:
+                if p == 1:
+                        print >> out_file, "pn" + str(p),
+
+                else:
+                        print >> out_file, ",pn" + str(p),
+                p = p + 1 
+        print >> out_file, ")"
      	print >> out_file, "vars <- data.frame(",
 	p = 1
        	while p <= no_files:
