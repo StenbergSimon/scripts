@@ -99,6 +99,7 @@ def writeRscript(PLATE, name):
         out_file = open(out, "w")
 	print >> out_file, "#!/usr/bin/env Rscript"
 	print >> out_file, "library(ggplot2)"
+	print >> out_file, "source(\"~/simon/scripts/multiplot.r\")"
 	print >> out_file, "library(reshape2)"
 	print >> out_file, "args <-commandArgs(trailingOnly = TRUE)"		
 	print >> out_file, "filename<-paste(args[1], \'.pdf\', sep=\"\")"
@@ -116,6 +117,7 @@ def writeRscript(PLATE, name):
 		line = line.rstrip()
 		pindex = "p" + str(p)
 		print >> out_file, pindex + " <- read.table(\"" + line + "\")"
+	#	print >> out_file, pindex + " <- 2^(" + pindex + ")" 
 		p = p + 1
 	p = 1
 	for line in PLATE:
@@ -201,28 +203,37 @@ def writeRscript(PLATE, name):
 	print >> out_file, ")"
 	print >> out_file, "names(means) <- unique(exp.molten$variable)"
 	print >> out_file, "means <- as.data.frame(t(means))"
-	print >> out_file, "means$V3 <- row.names(means)"
+	print >> out_file, "means$V3 <- 1:50"
+	#print >> out_file, "exp.molten$Variable <- 1:50"
 	print >> out_file, "pm <- ggplot(means, aes(y=V1, x=V3, colour=\"#00AA93\", group=1))"
-	print >> out_file, "pm <- pm + geom_errorbar(aes(ymin=V1-V2, ymax=V1+V2, width=.2)) + geom_line() + geom_point()" 
+	print >> out_file, "pm <- pm + geom_errorbar(aes(ymin=V1-V2, ymax=V1+V2, width=.2)) + geom_line() + geom_point() + theme_grey(base_size = 15)"  
 	print >> out_file, "pm <- pm + theme(legend.position=\"none\") + labs(x=\"\", y=\"Average Generation time\")"
 	print >> out_file, "names(no_extremes) <- unique(exp.molten$variable)"
 	print >> out_file, "no_extremes.molten <- melt(no_extremes)" 
+	print >> out_file, "no_pos_extremes.molten <- melt(no_pos_extremes)"
+	print >> out_file, "no_pos_extremes.molten$variable <- 1:50"
+	print >> out_file, "no_extremes.molten$variable <- 1:50"
 	print >> out_file, "p <- ggplot(exp.molten, aes(y=value, x=variable, fill=\"#00AA93\"))"
-	print >> out_file, "p <- p + geom_boxplot() + labs(x=\"\", y=\"Generation time\") + scale_fill_manual(name=\"\", values=c(\"#00AA93\",\"#FF6A00\"))"
+	print >> out_file, "p <- p + geom_boxplot() + labs(x=\"\", y=\"Generation time\") + theme_grey(base_size = 15) + scale_fill_manual(name=\"\", values=c(\"#00AA93\",\"#FF6A00\"))"
 	print >> out_file, "p <- p + theme(legend.position=\"none\")"
-	print >> out_file, "pl <- ggplot(no_extremes.molten, aes(y=value, x=variable, fill=\"#00AA93\"))"
-	print >> out_file, "pl <- pl + geom_bar(stat=\"identity\") + labs(x=\"\", y=\"Number of outliers (<Median)\") + scale_fill_manual(name=\"\", values=c(\"#00AA93\",\"#FF6A00\"))"
-
+	print >> out_file, "pl <- ggplot(no_extremes.molten, aes(y=value, x=variable))"
+	print >> out_file, "pl_2 <- ggplot(no_pos_extremes.molten, aes(y=value, x=variable))"
+	print >> out_file, "pl <- pl + geom_point(stat=\"identity\", color=\"#FF6A00\") + geom_line(color=\"#FF6A00\", linetype=\"dashed\") + theme_grey(base_size = 15) + ylim(0,110) + labs(y=\"Number of negative extremes\", x=\"Cycle\")"
+	print >> out_file, "pl_2 <- pl_2 + geom_point(stat=\"identity\", color=\"#00AA93\") + geom_line(color=\"#00AA93\", linetype=\"dashed\") + theme_grey(base_size = 15) + ylim(0,110) + labs(y=\"Number of positive extremes\", x=\"Cycle\")"
 	print >> out_file, "pl <- pl + theme(legend.position=\"none\")"
-	print >> out_file, "pl <- pl + theme(axis.text.x = element_text(angle = 90, hjust = 1))"
-	print >> out_file, "p <- p + theme(axis.text.x = element_text(angle = 90, hjust = 1))"
-	print >> out_file, "pm <- pm + theme(axis.text.x = element_text(angle = 90, hjust = 1))"
+	#print >> out_file, "pl <- pl + theme(axis.text.x = element_text(angle = 90, hjust = 1))"
+	print >> out_file, "pl_2 <- pl_2 + theme(legend.position=\"none\")"
+        #print >> out_file, "pl_2 <- pl_2 + theme(axis.text.x = element_text(angle = 90, hjust = 1))"
+	print >> out_file, "p <- p + theme(axis.text.x = element_blank())"
+	#print >> out_file, "pm <- pm + theme(axis.text.x = element_text(angle = 90, hjust = 1))"
 	print >> out_file, "pl <- pl + ggtitle(\"" + name + "\")"
+	print >> out_file, "pl_2 <- pl_2 + ggtitle(\"" + name + "\")"
 	print >> out_file, "p <- p + ggtitle(\"" + name + "\")"
 	print >> out_file, "pm <- pm + ggtitle(\"" + name + "\")"
-	print >> out_file, "print(pl)"
-	print >> out_file, "print(p)"
-	print >> out_file, "print(pm)"
+	print >> out_file, "multiplot(p,pm,pl,pl_2, cols=2)"
+	#print >> out_file, "print(pl)"
+	#print >> out_file, "print(p)"
+	#print >> out_file, "print(pm)"
         p = 1
         for line in PLATE:
             print >> out_file, "p%s$value <- (p%s$value + a_factor)" % (p,p)
@@ -283,8 +294,8 @@ def pdfTrimmer(name, options):
 	inpdf = PdfFileReader(file(pdf, "rb"))
 	output = PdfFileWriter()
 	numPages = inpdf.getNumPages()
-        output.addPage(inpdf.getPage((int(numPages) - 3)))
-	output.addPage(inpdf.getPage((int(numPages) - 2)))
+        #output.addPage(inpdf.getPage((int(numPages) - 3)))
+	#output.addPage(inpdf.getPage((int(numPages) - 2)))
 	output.addPage(inpdf.getPage((int(numPages) - 1)))
 	outputStream = file(outname, "wb")
 	output.write(outputStream)
