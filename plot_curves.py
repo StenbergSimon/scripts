@@ -50,9 +50,7 @@ if __name__ == "__main__":
 	if bool(options.random) == True:
 		options.row,options.col = get_random_pos()
 		out = extract_curves(options, dates)
-		print out
-		print type(out[1][1])
-		out = np.ma.masked_array(out,np.isnan(out))
+		out = np.ma.masked_array(out,np.isnan(out.astype(float)))
 		while not (np.sum(out)) > 1:
 			options.row,options.col = get_random_pos()
 			out = extract_curves(options, dates)
