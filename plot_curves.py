@@ -23,6 +23,7 @@ prsr.add_option("-s", "--scan_no", dest="scan_no", metavar="Int", help="Scanner"
 def extract_curves(options, scan_dates):
  	OUTPUT = []
 	for scan_date in scan_dates:       
+		scan_date.rstrip()
 		scan = "_scanner" + str(options.scan_no)
         	project = os.path.join(options.path,(scan_date + scan), (scan_date + scan), "analysis", "curves_smooth.npy")
         	DN = np.load(project)
