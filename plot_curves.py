@@ -49,12 +49,8 @@ if __name__ == "__main__":
 
 	if bool(options.random) == True:
 		row,col = get_random_pos()
-		out = extract_curves(options, dates)
-		while np.sum(out) == nan:
-			out = extract_curves(options, dates)
 		
-	else:	
-		out = extract_curves(options, dates)
+	out = extract_curves(options, dates)
 	
 	filename = "scanner_%s_%s_%s_%s.csv" % scan_no,plate,column,row
 	filename = os.path.join(options.out_path, filename)	
