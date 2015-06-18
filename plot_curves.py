@@ -4,6 +4,7 @@ import sys
 from optparse import OptionParser as opt
 import numpy as np
 import pandas as pd
+import scanomatic.dataProcessing.norm as som_norm
 
 #Set the options that need to be set
 prsr = opt()
