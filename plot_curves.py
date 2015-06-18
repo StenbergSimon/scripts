@@ -48,14 +48,11 @@ if __name__ == "__main__":
 		dates = date_file.readlines()
 
 	if bool(options.random) == True:
-		while True:
-			try:
-				options.row,options.col = get_random_pos()
-				out = extract_curves(options, dates)
-			except np.sum(out) > 1:
-				print np.sum(out)
-				continue
-			break
+		options.row,options.col = get_random_pos()
+		out = extract_curves(options, dates)
+		while not np.sum(out) > 1:
+			options.row,options.col = get_random_pos()
+			out = extract_curves(options, dates)
 
 	else:
 		out = extract_curves(options, dates)
