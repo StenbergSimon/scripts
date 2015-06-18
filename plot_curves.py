@@ -30,7 +30,7 @@ def extract_curves(options, scan_dates):
         	DN = np.load(project)
         	EP = [som_norm.DEFAULT_CONTROL_POSITION_KERNEL == False] * 4
         	PROJECT = som_norm.getControlPositionsArray(DN,EP)
-        	OUTPUT.append(PROJECT[options.plt][options.row][options.column])
+        	OUTPUT.append(PROJECT[options.plt][options.row][options.col])
 
 	
 	return OUTPUT
