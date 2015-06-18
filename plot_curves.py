@@ -53,6 +53,7 @@ if __name__ == "__main__":
 				options.row,options.col = get_random_pos()
 				out = extract_curves(options, dates)
 			except np.sum(out) > 1:
+				print np.sum(out)
 				continue
 			break
 
