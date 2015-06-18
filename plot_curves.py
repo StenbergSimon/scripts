@@ -41,7 +41,8 @@ def get_random_pos():
 
 if __name__ == "__main__":
 
-	
+	options.plt = options.plt - 1
+
 	with open(options.list, "r") as date_file:
 		dates = date_file.readlines()
 
