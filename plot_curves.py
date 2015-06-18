@@ -4,6 +4,7 @@ import sys
 from optparse import OptionParser as opt
 import numpy as np
 import pandas as pd
+import plot_phen
 
 #Set the options that need to be set
 prsr = opt()
@@ -25,7 +26,7 @@ def extract_curves(options, scan_dates):
 	for scan_date in scan_dates:       
 		scan = "_scanner" + str(options.scan_no)
         	project = os.path.join(options.path,(scan_date + scan), (scan_date + scan), "analysis", "curves_smooth.npy")
-        	checkDir(os.path.dirname(project))
+        	plot_phen.checkDir(os.path.dirname(project))
         	DN = np.load(project)
         	EP = [som_norm.DEFAULT_CONTROL_POSITION_KERNEL == False] * 4
         	PROJECT = som_norm.getControlPositionsArray(DN,EP)
