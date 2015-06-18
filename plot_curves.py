@@ -48,7 +48,7 @@ if __name__ == "__main__":
 		dates = date_file.readlines()
 
 	if bool(options.random) == True:
-		row,col = get_random_pos()
+		options.row,options.col = get_random_pos()
 		
 	out = extract_curves(options, dates)
 	
