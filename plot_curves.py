@@ -48,9 +48,16 @@ if __name__ == "__main__":
 		dates = date_file.readlines()
 
 	if bool(options.random) == True:
-		options.row,options.col = get_random_pos()
-		
-	out = extract_curves(options, dates)
+		while True:
+			try:
+				options.row,options.col = get_random_pos()
+				out = extract_curves(options, dates)
+			except np.sum(out) > 1:
+				continue
+			break
+
+	else:
+		out = extract_curves(options, dates)
 	
 	filename = "scanner_%s_%s_%s_%s.csv" % (options.scan_no,options.plt,options.col,options.row)
 	filename = os.path.join(options.out_path, filename)	
