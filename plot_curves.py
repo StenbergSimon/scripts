@@ -12,9 +12,9 @@ prsr.add_option("-l", "--list", dest="list", metavar="FILE", help="List of dates
 prsr.add_option("-i", "--input-path", dest="path", metavar="PATH", help="Path to projects")
 prsr.add_option("-g", "--random", dest="random", metavar="BOOL", default=True, help="Generate random position? [Default:%default]")
 prsr.add_option("-o", "--output-path", dest="out_path", metavar="PATH", help="output path")
-prsr.add_option("-r", "--row", dest="row", metavar="Int", help="Row")
-prsr.add_option("-c", "--col", dest="col", metavar="Int", help="Col")
-prsr.add_option("-p", "--plt", dest="plt", metavar="Int", help="Plate")
+prsr.add_option("-r", "--row", dest="row", type="int", metavar="Int", help="Row")
+prsr.add_option("-c", "--col", dest="col", type="int", metavar="Int", help="Col")
+prsr.add_option("-p", "--plt", dest="plt", type="int", metavar="Int", help="Plate")
 prsr.add_option("-s", "--scan_no", dest="scan_no", metavar="Int", help="Scanner")
 
 # Get options
