@@ -52,7 +52,7 @@ if __name__ == "__main__":
 		
 	out = extract_curves(options, dates)
 	
-	filename = "scanner_%s_%s_%s_%s.csv" % scan_no,plate,column,row
+	filename = "scanner_%s_%s_%s_%s.csv" % options.scan_no,options.plt,options.col,options.row
 	filename = os.path.join(options.out_path, filename)	
 
 	table = pd.DataFrame(out)
