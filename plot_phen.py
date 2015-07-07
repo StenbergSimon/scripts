@@ -59,6 +59,9 @@ def extractExp(options, scan_date, scan_no):
     		os.makedirs(tmpdir)
 	DN = np.load(project)
 	EP = [som_norm.DEFAULT_CONTROL_POSITION_KERNEL == False] * 4
+	# NaN's are converted to zero to differntiate removed values vs controls
+	nans = np.isnan(DN)
+	DN[nans] = 0
 	pn1,pn2,pn3,pn4 = som_norm.getControlPositionsArray(DN,EP)
 	pn2=np.ma.masked_invalid(pn2[:, :, 0])
 	pn1=np.ma.masked_invalid(pn1[:, :, 0])
@@ -122,8 +125,10 @@ def writeRscript(PLATE, name):
 	p = 1
 	for line in PLATE:
 		pindex = "p" + str(p)
+		print >> out_file, pindex + "[" + pindex + "==0] <- NA"
 		print >> out_file, pindex + " <- melt(" + pindex + ")"
-		print >> out_file, pindex + "$variable <- \"Cycle" + str(p).zfill(2) + "\"" 
+		print >> out_file, pindex + "$variable <-" + str(p)
+		print >> out_file, pindex + "$pos <- 1:1044"
 		print >> out_file, "b" + str(p) + " <- boxplot(" + pindex + "$value)"
 		print >> out_file, "z" + str(p) + " <- b" + str(p) + "$out < median(" + pindex + "$value)"
 		print >> out_file, "pz" + str(p) + " <- b" + str(p) + "$out > median(" + pindex + "$value)"
