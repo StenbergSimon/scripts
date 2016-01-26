@@ -20,7 +20,7 @@ class gray_scale_patcher():
 		new_gs = []
 		for i in comp:
 			newgs = i.fixture.grayscale.values
-			template = "\"grayscale_values: " + str(newgs) + "\""
+			template = "\'grayscale_values\': " + str(newgs)
 			new_gs.append(template)
 		return new_gs
 	
