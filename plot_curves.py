@@ -20,6 +20,8 @@ prsr.add_option("-s", "--scan_no", dest="scan_no", metavar="Int", help="Scanner"
 
 # Get options
 (options, args) = prsr.parse_args()
+if options.random == "False":
+	options.random = False
 
 def extract_curves(options, scan_dates):
  	OUTPUT = []
@@ -46,8 +48,7 @@ if __name__ == "__main__":
 
 	with open(options.list, "r") as date_file:
 		dates = date_file.readlines()
-
-	if bool(options.random) == True:
+	if options.random:
 		options.row,options.col = get_random_pos()
 		out = extract_curves(options, dates)
 		test = np.ma.masked_array(out[0],np.isnan(out[0]))
@@ -57,7 +58,6 @@ if __name__ == "__main__":
                 	test = np.ma.masked_array(out[0],np.isnan(out[0])) 
 	else:
 		out = extract_curves(options, dates)
-	
 	filename = "scanner_%s_%s_%s_%s.csv" % (options.scan_no,options.plt,options.col,options.row)
 	filename = os.path.join(options.out_path, filename)	
 
