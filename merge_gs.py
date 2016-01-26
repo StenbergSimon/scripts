@@ -15,9 +15,9 @@ class gray_scale_patcher():
     def __init__(self):
         pass
 
-    def get_new_gs(self, compilation)
+    def get_new_gs(self, compilation):
 		comp = CompileImageAnalysisFactory.serializer.load(compilation)
-		new_gs
+		new_gs = []
 		for i in comp:
 			newgs = i.fixture.grayscale.values
 			template = "\"grayscale_values: " + str(newgs) + "\""
@@ -28,8 +28,9 @@ class gray_scale_patcher():
 
         PASS_ANALYSIS = self.parser(input_file)
         new_gs = self.get_new_gs(compilation)
-        for i in xrange(1, len(PASS_ANALYSIS)):
-            p = re.compile(r"\'grayscale_values\':\s\[(.+)\],")
+        PASS_ANALYSIS.pop()
+	for i in xrange(1, len(PASS_ANALYSIS)):
+	    p = re.compile(r"\'grayscale_values\':\s\[(.+)\],")
             new_insert = new_gs.pop(0)
 	    new_insert = str(new_insert) + str(",")
 	    PASS_ANALYSIS[i] = p.sub(new_insert, PASS_ANALYSIS[i])
